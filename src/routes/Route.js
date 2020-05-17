@@ -5,6 +5,9 @@ import PropTypes from 'prop-types';
 import AuthLayout from '~/pages/_layouts/auth';
 import DefaultLayout from '~/pages/_layouts/default';
 
+// store do redux
+import { store } from '~/store';
+
 // utilizamos o `component: Component` pois não podemos utilizar essa forma `<component />`
 // então precisamos fazer assim
 // o `isPrivate` é a propriedade que estamos criando para definirmos se a rota será privada ou não
@@ -14,7 +17,7 @@ export default function RouteWrapper({
   isPrivate,
   ...rest
 }) {
-  const signed = false;
+  const { signed } = store.getState().auth;
 
   // Usuario não está logado e tentando acessar uma rota privada
   // Não deixa redireciona para o login
