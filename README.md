@@ -1368,3 +1368,126 @@ export default all([
   takeLatest('persist/REHYDRATE', setToken), // <- Adicionado isso percebemos utilizando Timeline do Reactotron
 ]);
 ```
+
+---
+
+## Página de Dashboard
+
+- Criar a parte do `header` que será compartilhado por outras páginas, para tal criamos como component.
+
+- Criar a pasta `src/components`
+- Criar o arquivo `src/components/Header/index.js`
+
+**Uma dica para gerar avatar: [Adorable Avatars](http://avatars.adorable.io)**
+
+- Em `src/pages/_layouts/default/index.js` adicionar o component Header.
+
+---
+
+- Criar a parte de notificações
+
+- Criar o arquivo `src/components/Notificacoes/index.js`
+- Criar o arquivo `src/components/Notificacoes/styles.js`
+
+- Importa-lo para o arquivo `src/components/Header/index.js`
+
+- Adicionar a dependencias de icons:
+
+```bash
+yarn add react-icons
+```
+
+- Mais detalhes em [Estilização na prática 1](https://github.com/mrcarromesa/react-parte7)
+
+## Scroll bar com react
+
+Para utilizar algo parecido com `overflow: auto` para exibir um scroll para quando a quantidade de elementos atingir alem do tamanho definido.
+
+- Primeiramente instale a dependencia:
+
+```bash
+yarn add react-perfect-scrollbar
+```
+
+- Para utilizar é necessário importar no `src/styles/globals.js` precisamos importar o seguinte css:
+
+```js
+import 'react-perfect-scrollbar/dist/css/styles.css';
+```
+
+- Mais detalhes: [React-Perfect-Scrollbar](https://github.com/goldenyz/react-perfect-scrollbar)
+
+
+---
+
+## Obtendo as notificações da api
+
+- Realizar ajustes no arquivo `src/components/Notifications/index.js`:
+
+- Para trabalahar com data podemos utilizar a lib `data-fns@next` o `@next` é para obter sempre a última versão:
+
+```bash
+yarn add date-fns@next
+```
+
+- Vamos utilizar para determinar o intervalod de data de há quanto tempo uma notificação foi criada...,
+
+- Para isso importamos:
+
+```js
+// o parseISO utilizamos para transformar uma string em um obejct Date do javascript
+// o formatDistance utilizamos para obter formatação de distancia, ex.: essa data foi a tanto tempo atrás
+import { parseISO, formatDistance } from 'date-fns';
+import pt from 'date-fns/locale/pt-BR';
+```
+
+- E utilizamos da seguinte forma:
+
+```js
+timeDistance: formatDistance(
+  parseISO(notification.createdAt), // <- Calcular de, converte string para Object Data do JS
+  new Date(), // <- Calcular até a data atual
+  {
+    addSuffix: true, // <- Adicionar a palavra `há` na frente da distancia da data.
+    locale: pt  // <- Utilizar no idioma pt-BR, conforme definido no import
+  }
+),
+
+// Exemplo do resultado: `há 9 dias`
+```
+
+- Como atualizar uma notificação de Não lida para lida:
+
+```js
+async function handleMarkAsRead(id) {
+  await api.put(`notifications/${id}`);
+
+  // Alterado o state: const [notifications, setNotifications] = useState([]);
+  setNotifications(
+    // Pecorre todas as notificacoes
+    notifications.map((notification) =>
+    // ao encontrar a notificacao no qual o id for igual ao id passado na function alteramos o valor do read, dessa forma:
+    // { ...notification, PROP_QUE_SERA_ADD_OU_ALTERADA: NOVO_VALOR_DO_PROP }
+    // caso contrário retorna o proprio object
+      notification._id === id ? { ...notification, read: true } : notification
+    )
+  );
+}
+```
+
+---
+
+- Atualizando o `state` de forma performatica do badge do notifications utilizando o `useMemo`:
+
+```js
+const hasUnread = useMemo(
+  () => !!notifications.find((notification) => !notification.read),
+  [notifications]
+);
+```
+
+- O `!!` utilizado é devido o `find` retornar um array, mas precisamos retornar um `boolean`, então utilizamos esse recurso do `!!` que também é a mesma coisa de utilizarmos o `Boolean(...)`
+
+- Utilizamos Esse hook pois ele será chamado apenas quando o valor do notication mudar, pois do contrário qualquer `state` que mudasse, como no caso do `visble` ele iria recaulcular esse valor toda vez, mesmo não sendo necessário, por isso esse é um bom motivo para utilizarmos o `useMemo` por uma questão de desempenho.
+
+- Mais detalhes: [Hooks](https://github.com/mrcarromesa/react-hooks-parte2)
