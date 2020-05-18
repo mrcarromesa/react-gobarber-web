@@ -1,5 +1,7 @@
 # Go Barber Web
 
+- **BACK-END do projeto desenvolvido em Node: [Go Barber](https://github.com/mrcarromesa/gobarber)**
+
 - Sobre como iniciar o projeto configuração pode acompanhar em:
   - [Projeto com ReactJS Parte 1 (Inicio)](https://github.com/mrcarromesa/react-parte2)
   - [Configurando o ESLint, Prettier, Editor Config](https://github.com/mrcarromesa/react-parte3)
@@ -1491,3 +1493,90 @@ const hasUnread = useMemo(
 - Utilizamos Esse hook pois ele será chamado apenas quando o valor do notication mudar, pois do contrário qualquer `state` que mudasse, como no caso do `visble` ele iria recaulcular esse valor toda vez, mesmo não sendo necessário, por isso esse é um bom motivo para utilizarmos o `useMemo` por uma questão de desempenho.
 
 - Mais detalhes: [Hooks](https://github.com/mrcarromesa/react-hooks-parte2)
+
+
+---
+
+- Trabalhando na página `Profile`
+
+- Adicionado actions em `src/store/modules/user/actions.js`
+- Adicionado takeLast em `src/store/modules/user/sagas.js`
+
+- **Não esquecer de adicionar mais um case no reducer para atualizar o state do profile**
+
+- No arquivo `src/store/modules/user/reducer.js`
+
+```js
+case '@user/UPDATE_PROFILE_SUCCESS': {
+  draft.profile = action.payload.profile;
+  break;
+}
+```
+
+- Algo interessante é essa forma de desestruturação:
+
+```js
+  const { name, email, ...rest } = payload.data; // O object tem mais informações estamos obtendo apenas o name e email e todo o resto fica dentro do ...rest
+  const profile = { name, email, ...(rest.oldPassword ? rest : {}) }; // Está utilizando o Object.assign()
+  // O mesmo que:
+
+  // const profile = Object.assign({name, email}, rest.oldPassword ? rest : {});
+```
+
+
+---
+
+## Component Input File com preview
+
+- Criar o arquivo `src/pages/Profile/AvatarInput/index.js`
+- Criar o arquivo `src/pages/Profile/AvatarInput/styles.js`
+
+
+---
+
+## Sair da aplicação
+
+- Criar uma nova action em `src/store/modules/auth/actions.js`:
+
+```js
+export function signOut() {
+  return {
+    type: '@auth/SIGN_OUT',
+  };
+}
+```
+
+- Cria um novo case em `src/store/modules/auth/reducer.js`:
+
+```js
+case '@auth/SIGN_OUT': {
+  draft.token = null;
+  draft.signed = false;
+  break;
+}
+```
+
+- Também no reducer de usuário em `src/store/modules/user/reducer.js` adicione:
+
+```js
+case '@auth/SIGN_OUT': {
+  draft.profile = null; // <- Vamos voltar ao state inicial o usuário
+  break;
+}
+```
+
+- No arquivo `src/store/modules/auth/sagas.js` adicionar:
+
+```js
+// ...
+export function signOut() {
+  history.push('/'); // <- Voltamos o usuário para tela inicial
+}
+
+export default all([
+  // ...
+  takeLatest('@auth/SIGN_OUT', signOut),
+]);
+```
+
+- Por fim chamar o dispatch para a action em `src/pages/Profile/index.js`

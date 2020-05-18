@@ -14,7 +14,7 @@ export function signInSuccess(token, user) {
 
 export function singUpRequest(name, email, password) {
   return {
-    type: '@auth/SING_UP_REQUEST',
+    type: '@auth/SIGN_UP_REQUEST',
     payload: { name, email, password },
   };
 }
@@ -22,5 +22,11 @@ export function singUpRequest(name, email, password) {
 export function signFailure() {
   return {
     type: '@auth/SIGN_FAILURE',
+  };
+}
+
+export function signOut() {
+  return {
+    type: '@auth/SIGN_OUT',
   };
 }
