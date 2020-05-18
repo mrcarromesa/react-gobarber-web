@@ -1531,6 +1531,7 @@ case '@user/UPDATE_PROFILE_SUCCESS': {
 - Criar o arquivo `src/pages/Profile/AvatarInput/index.js`
 - Criar o arquivo `src/pages/Profile/AvatarInput/styles.js`
 
+- Mais detalhes de como utilizar o `unform`: [Unform](https://github.com/Rocketseat/unform)
 
 ---
 
