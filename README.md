@@ -1581,3 +1581,20 @@ export default all([
 ```
 
 - Por fim chamar o dispatch para a action em `src/pages/Profile/index.js`
+
+
+---
+
+## Estiolos do Dashboard
+
+- Criar os estilos do dashboard:
+
+- Criar o arquivo `src/pages/Dashboard/styles.js`
+
+- Para trabalhar com timzone instale a dependencia:
+
+```bash
+yarn add date-fns-tz
+```
+
+- Por fim foi adicionado ultimas funcionalidades em `src/pages/Dashboard/index.js`
